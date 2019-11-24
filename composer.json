@@ -13,5 +13,7 @@
             "email": "admin@aprtech.net"
         }
     ],
-    "require": {}
+    "require": {
+        "illuminate/database": "^6.5"
+    }
 }
