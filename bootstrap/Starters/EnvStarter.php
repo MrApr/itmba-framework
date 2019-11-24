@@ -11,13 +11,13 @@ use Dotenv\Dotenv;
  * Class EnvStarter
  * @package Services
  */
-class EnvStarter
+class EnvStarter implements StarterInterface
 {
     /**
      * When Service Registers Constructor gets called
      * EnvStarter constructor.
      */
-    public function __construct()
+    public function register()
     {
         $dotenv = Dotenv::create(dirname(dirname(__DIR__)));
         $dotenv->load();

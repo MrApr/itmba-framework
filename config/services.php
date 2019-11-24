@@ -1,8 +1,9 @@
 <?php
 
 return [
-    //Service with alias
+    //Sample Service with alias
     "sample" => \Services\EnvStarter::class,
-    //Service without Alias
+
+    //Sample Service without Alias
     \Services\EnvStarter::class
 ];
