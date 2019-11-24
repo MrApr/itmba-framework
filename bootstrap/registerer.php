@@ -41,5 +41,10 @@ if(count($services))
 //Register all files that contain functions
 foreach (glob(__DIR__."/Helpers/*") as $helper_file)
 {
-    include_once $helper_file;
+    //Check if helper file exists
+    if(file_exists($helper_file))
+    {
+        //Include Helper files
+        include_once $helper_file;
+    }
 }

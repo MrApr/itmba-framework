@@ -1,3 +1,3 @@
 <?php
-define('APPROOT',dirname(dirname(__DIR__)));
-define('PUBLICROOT',env('APP_URL'));
+define('APP_ROOT',dirname(dirname(__DIR__)));
+define('PUBLIC_ROOT',env('APP_URL'));
