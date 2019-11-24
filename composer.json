@@ -4,7 +4,8 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "App\\": "app/"
+            "App\\": "app/",
+            "Services\\": "bootstrap/Starters"
         }
     },
     "authors": [
@@ -14,6 +15,7 @@
         }
     ],
     "require": {
-        "illuminate/database": "^6.5"
+        "illuminate/database": "^6.5",
+        "vlucas/phpdotenv": "^3.6"
     }
 }
