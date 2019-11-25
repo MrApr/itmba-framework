@@ -2,6 +2,17 @@
 //Load Services that are registered in services Config
 $services = require_once "../config/services.php";
 
+//Register all files that contain functions
+foreach (glob(__DIR__."/Helpers/*") as $helper_file)
+{
+    //Check if helper file exists
+    if(file_exists($helper_file))
+    {
+        //Include Helper files
+        include_once $helper_file;
+    }
+}
+
 //Check if any service exists to register
 if(count($services))
 {
@@ -35,16 +46,5 @@ if(count($services))
 
         //clean up ram
         unset($key,$service);
-    }
-}
-
-//Register all files that contain functions
-foreach (glob(__DIR__."/Helpers/*") as $helper_file)
-{
-    //Check if helper file exists
-    if(file_exists($helper_file))
-    {
-        //Include Helper files
-        include_once $helper_file;
     }
 }

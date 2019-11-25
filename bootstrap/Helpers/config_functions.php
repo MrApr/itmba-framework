@@ -25,7 +25,7 @@ function config(string $key)
                 if(file_exists(APP_ROOT."/config/".$value.".php"))
                 {
                     //include config file
-                    $config_val = include_once APP_ROOT."/config/".$value.".php";
+                    $config_val = include APP_ROOT."/config/".$value.".php";
                 }
             }
             else
