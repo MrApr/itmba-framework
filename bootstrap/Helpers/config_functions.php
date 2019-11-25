@@ -10,6 +10,8 @@ function config(string $key)
     //The value that should return
     $config_val = null;
 
+    //The return value ! in order to delete and unset included configuration file for memory performance
+    $value = null;
     //Explode keys by the key.key.key pattern
     $keys = explode('.',$key);
 
@@ -37,8 +39,10 @@ function config(string $key)
                 }
             }
         }
+        $value = (!is_array($config_val)) ? $config_val : null;
+        unset($config_val);
     }
 
     //Check if config_value is array or not ! if not return value if yes return null
-    return (!is_array($config_val)) ? $config_val : null;
+    return $value;
 }
