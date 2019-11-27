@@ -7,12 +7,6 @@ use Symfony\Component\Console\Application;
 
 class CommandsStarter
 {
-
-    public function test()
-    {
-        print(dirname(dirname(__DIR__)));
-    }
-
     /**
      * Loading commands that are defined in commands config
      * register them to $application
@@ -45,6 +39,20 @@ class CommandsStarter
         return false;
     }
 
+    public function requireHelpers()
+    {
+        //Register all files that contain functions
+        foreach (glob(dirname(dirname(__DIR__))."/bootstrap/Helpers/*") as $helper_file)
+        {
+            //Check if helper file exists
+            if(file_exists($helper_file))
+            {
+                //Include Helper files
+                include_once $helper_file;
+            }
+        }
+    }
+
     /**
      * //Rung and register commands
      * @throws \Exception
@@ -53,6 +61,9 @@ class CommandsStarter
     {
         //Make instance of app
         $application = new Application();
+
+        //Requiring App Helpers
+        $this->requireHelpers();
 
         //Register Commands
         $res = $this->RegisterCommands($application);
