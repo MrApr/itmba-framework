@@ -39,6 +39,9 @@ class CommandsStarter
         return false;
     }
 
+    /**
+     * Require Desired App Helpers
+     */
     public function requireHelpers()
     {
         //Register all files that contain functions

@@ -19,6 +19,7 @@ class CreatorBase
     private $traits;
 
     private $contents;
+
     private $file_contents = '<?php
 
     
@@ -33,6 +34,15 @@ class {class_name} {extends}
 
 ';
 
+    /**
+     * CreatorBase constructor.| configs file creator class and fills desired fields
+     * @param string $class_name
+     * @param string $section
+     * @param $contents
+     * @param string|null $extends
+     * @param null $src
+     * @param array $traits
+     */
     public function __construct(string $class_name,string $section, $contents, string $extends = null ,$src = null ,array $traits = [])
     {
         $this->class_name = $class_name;
@@ -57,6 +67,9 @@ class {class_name} {extends}
         }
     }
 
+    /**
+     * Config Creator command and replaces user inputs to available Place-holders
+     */
     public function configFile()
     {
         $this->file_contents = str_replace([
@@ -85,6 +98,10 @@ class {class_name} {extends}
         }
     }
 
+    /**
+     * Configs file and creates file based on users input and returns success or fail
+     * @return array
+     */
     public function createFile()
     {
         $this->configFile();
@@ -95,7 +112,8 @@ class {class_name} {extends}
                 $file = fopen($this->directory.".php",'w');
             }catch (\Exception $e)
             {
-                die('Cannot create directory');
+                return array('status' => 'error','message' => "Cannot create Directory with error ".$e->getMessage());
+
             }
 
             fwrite($file,$this->file_contents);

@@ -22,7 +22,7 @@ class CreateModelCommand extends CommandBase
 
 
     /**
-     * Get command configured and run application based on users input
+     * Create model based on users input
      * @param InputInterface $input
      * @param OutputInterface $output
      */
