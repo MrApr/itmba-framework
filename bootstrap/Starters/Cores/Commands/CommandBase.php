@@ -40,7 +40,7 @@ abstract class CommandBase extends Command
         {
             foreach ($this->command_options as $option_name => $option_description)
             {
-                $this->addOption($option_name,null,InputOption::VALUE_NONE,$option_description);
+                $this->addOption($option_name,null,InputOption::VALUE_OPTIONAL,$option_description);
             }
         }
     }
