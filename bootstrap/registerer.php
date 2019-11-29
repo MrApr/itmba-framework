@@ -16,6 +16,9 @@ foreach (glob(__DIR__."/Helpers/*") as $helper_file)
 //Check if any service exists to register
 if(count($services))
 {
+    //Create a service container to store made objects of services
+
+    $container = new \Illuminate\Container\Container;
     //Registering Services
     foreach ($services as $key => $service)
     {
@@ -41,10 +44,17 @@ if(count($services))
         if(method_exists($key,'register'))
         {
             //register it
-            $key->register();
+            $result = $key->register();
+
+            //If register method contains Services to register in container
+            //Register them in container
+            if(is_array($result) && !empty($result))
+            {
+                $container->instance($result['instance'],$result['value']);
+            }
         }
 
         //clean up ram
-        unset($key,$service);
+        unset($key,$service,$result);
     }
 }
