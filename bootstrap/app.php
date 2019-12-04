@@ -6,4 +6,3 @@ require_once ("registerer.php");
 
 require_once ("../routes/web.php");
 
-print_r($router->routes);

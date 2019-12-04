@@ -8,7 +8,7 @@ use Services\Cores\Exceptions\RouteMethodNotFound;
 
 class Router
 {
-    public $routes = [];
+    protected $routes = [];
 
     protected $method;
 
@@ -55,11 +55,6 @@ class Router
         unset($this->method);
         unset($this->middleware);
         unset($this->prefix);
-    }
-
-    protected function hasRoute(string $route_name)
-    {
-
     }
 
     public function name(string $route_name)
