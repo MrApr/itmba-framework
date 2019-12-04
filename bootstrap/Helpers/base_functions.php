@@ -1,6 +1,11 @@
 <?php
 
 /**
+ *Resolve a container to use it globally
+ */
+$container = new \Illuminate\Container\Container();
+
+/**
  * Get Config Values
  * @param $key
  * @return string
@@ -45,4 +50,40 @@ function config(string $key)
 
     //Check if config_value is array or not ! if not return value if yes return null
     return $value;
+}
+
+/**
+ * Calling views to in order to return them
+ * @param string $view_name
+ * @param array $data
+ * @throws Exception
+ */
+function view(string $view_name,array $data =[])
+{
+    if(!file_exists(BLADE_VIEW_PATH.'/'.$view_name.'.blade.php'))
+    {
+        die('View not found');
+    }
+    $blade= new \eftec\bladeone\BladeOne(BLADE_VIEW_PATH,BLADE_CACHE_PATH,\eftec\bladeone\BladeOne::MODE_AUTO);
+
+    echo $blade->run($view_name,$data);
+}
+
+/**
+ * Getting a route based on route name
+ * @param string $name
+ * @return string|array
+ */
+function route(string $name)
+{
+    global $container;
+
+    $routes = $container->make('routes');
+    $route = $routes->has($name);
+    if(!empty($route) && is_array($route) && count($route))
+    {
+        $route = $routes->makeRoute($route);
+    }
+
+    return $route;
 }

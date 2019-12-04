@@ -85,4 +85,29 @@ class Router
         $this->cleaningProperties();
         return $this;
     }
+
+    public function has(string $route_name)
+    {
+        foreach ($this->routes as $route)
+        {
+            if(isset($route['name']) && $route['name'] == $route_name)
+            {
+                return $route;
+            }
+        }
+    }
+
+    public function makeRoute(array $route)
+    {
+        $url = "/";
+
+        if(isset($route['prefix']) && !empty($route['prefix']))
+        {
+            $url .= $route['prefix']."/";
+        }
+
+        $url .= $route['url'];
+
+        return $url;
+    }
 }
