@@ -4,18 +4,43 @@
 namespace Services;
 
 
+use Services\Cores\Exceptions\ControllerNotFound;
+use Services\Cores\Exceptions\MethodNotFound;
 use Services\Cores\Exceptions\RouteMethodNotFound;
+use Services\Cores\Exceptions\RouteNotFound;
 
 class Router
 {
+    /**
+     * Defining Routes Container
+     * @var array
+     */
     protected $routes = [];
 
+    /**
+     * Defining temp Request Method
+     * @var
+     */
     protected $method;
 
+    /**
+     * Defining Temp Middleware
+     * @var
+     */
     protected $middleware;
 
+    /**Defining Temp Route Prefixes
+     * @var
+     */
     protected $prefix;
 
+    /**
+     * Called When a method doesnt exist to predefine GET and Post Methods
+     * @param $name
+     * @param $arguments
+     * @return $this
+     * @throws RouteMethodNotFound
+     */
     public function __call($name, $arguments)
     {
         $name = strtolower($name);
@@ -31,6 +56,11 @@ class Router
         }
     }
 
+    /**
+     * Add routes to Route Container
+     * @param string $url
+     * @param string $action
+     */
     protected function addRoute(string $url ,string $action)
     {
         $arguments = [];
@@ -50,6 +80,9 @@ class Router
         $this->routes[] = $arguments;
     }
 
+    /**
+     * Cleaning Temp Properties after a task got done
+     */
     protected function cleaningProperties()
     {
         unset($this->method);
@@ -57,6 +90,10 @@ class Router
         unset($this->prefix);
     }
 
+    /**
+     * Setting name For Routes
+     * @param string $route_name
+     */
     public function name(string $route_name)
     {
         $routes = $this->routes;
@@ -67,18 +104,33 @@ class Router
         $this->routes[] = $route;
     }
 
+    /**
+     * Setting middleware to temp middleware
+     * @param string $middelware_name
+     * @return $this
+     */
     public function middleware(string $middelware_name)
     {
         $this->middleware = $middelware_name;
         return $this;
     }
 
+    /**
+     * Setting Prefix For Routes
+     * @param string $prefix
+     * @return $this
+     */
     public function prefix(string $prefix)
     {
         $this->prefix = $prefix;
         return $this;
     }
 
+    /**
+     * Async Functions to set group of Routes
+     * @param \Closure $group
+     * @return $this
+     */
     public function group(\Closure $group)
     {
         call_user_func($group);
@@ -86,6 +138,11 @@ class Router
         return $this;
     }
 
+    /**
+     * Check if a route exists by name
+     * @param string $route_name
+     * @return mixed
+     */
     public function has(string $route_name)
     {
         foreach ($this->routes as $route)
@@ -97,6 +154,11 @@ class Router
         }
     }
 
+    /**
+     * Make Route url by passed route array
+     * @param array $route
+     * @return string
+     */
     public function makeRoute(array $route)
     {
         $url = "/";
@@ -109,5 +171,74 @@ class Router
         $url .= $route['url'];
 
         return $url;
+    }
+
+    /**
+     * Executes routes by user Request to call controller and it's method
+     * @throws ControllerNotFound
+     * @throws MethodNotFound
+     * @throws RouteNotFound
+     */
+    public function execute()
+    {
+        $url = rtrim($_SERVER['REQUEST_URI'],'/');
+        $route = $this->checkRoutesAreEqual($url);
+        if(empty($route))
+        {
+            throw new RouteNotFound("Requested Route Doesnt Exist");
+        }
+        $route_url = $this->makeRoute($route);
+        $params = $this->extractParams($url,$route_url);
+        $action = explode('@',$route['action']);
+        $controller = "App\\Controllers\\".str_replace("/",'\\',$action[0]);
+        $method = $action[1];
+
+        if(!class_exists($controller))
+        {
+            throw new ControllerNotFound('Controller Not Found');
+        }
+
+        $controller = new $controller();
+        if(!method_exists($controller,$method))
+        {
+            throw new MethodNotFound('Controller Not Found');
+        }
+
+        call_user_func_array([$controller,$method],$params);
+    }
+
+    /**
+     * Check if user requested route exists in registered routes
+     * @param string $requested_url
+     * @return mixed
+     */
+    public function checkRoutesAreEqual(string $requested_url)
+    {
+        $routes = $this->routes;
+
+        foreach ($routes as $route)
+        {
+            $url = $this->makeRoute($route);
+            $pattern = preg_replace('/{(.*?)}/','*',$url);
+            if(fnmatch($pattern,$requested_url))
+            {
+                return $route;
+            }
+        }
+    }
+
+    /**
+     * Extract passed params from route
+     * @param string $url
+     * @param string $pattern
+     * @return mixed
+     */
+    public function extractParams(string $url, string $pattern)
+    {
+        $pattern = preg_replace('/{(.*?)}/','*',$pattern);
+        $pattern = str_replace('/','\/',$pattern);
+        $pattern = str_replace('*','(.*?)',$pattern);
+        preg_match_all("/".$pattern."/",$url,$matches);
+        return $matches[1];
     }
 }
