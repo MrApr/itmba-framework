@@ -4,6 +4,7 @@
 namespace Services;
 
 
+use Illuminate\Http\Request;
 use Services\Cores\Exceptions\ControllerNotFound;
 use Services\Cores\Exceptions\MethodNotFound;
 use Services\Cores\Exceptions\RouteMethodNotFound;
@@ -179,9 +180,9 @@ class Router
      * @throws MethodNotFound
      * @throws RouteNotFound
      */
-    public function execute()
+    public function execute(Request $request)
     {
-        $url = rtrim($_SERVER['REQUEST_URI'],'/');
+        $url = rtrim(strtok($_SERVER['REQUEST_URI'],'?'),'/');
         $route = $this->checkRoutesAreEqual($url);
         if(empty($route))
         {
@@ -203,8 +204,30 @@ class Router
         {
             throw new MethodNotFound('Controller Not Found');
         }
-
+        $has_request_param = $this->checkIfMethodHasTypeOfArgs($controller,$method,"Illuminate\Http\Request");
+        if(isset($has_request_param))
+        {
+//            $params[] = $request;
+            array_splice($params,$has_request_param,0,[$request]);
+        }
         call_user_func_array([$controller,$method],$params);
+    }
+
+
+    public function checkIfMethodHasTypeOfArgs(object $class, string $method, $needed)
+    {
+        $params_checker = new \ReflectionMethod($class,$method);
+        $params = $params_checker->getParameters();
+        $index = 0;
+        foreach ($params as $param)
+        {
+            if($param->getType() == $needed)
+            {
+                 return $index;
+            }
+            $index++;
+        }
+        return false;
     }
 
     /**

@@ -4,6 +4,8 @@
 namespace App\Controllers;
 
 
+use Illuminate\Http\Request;
+
 class Controller
 {
     /**
@@ -11,8 +13,8 @@ class Controller
      * @param string $val
      * @throws \Exception
      */
-    public function test(string $val)
+    public function test(Request $request, string $val)
     {
-       return view('test',['title' => $val]);
+       return view('test',['title' => $request->title]);
     }
 }
