@@ -4,4 +4,6 @@
  */
 require_once ("registerer.php");
 
-\Services\StorageService::deleteFile('test/test.txt');
+require_once ("../routes/web.php");
+
+print_r($router->routes);
